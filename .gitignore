@@ -1,0 +1,9 @@
+appvirtual/
+.vscode/
+data/
+app2.py
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
