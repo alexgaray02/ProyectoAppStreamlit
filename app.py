@@ -226,14 +226,14 @@ if archivo is not None:
         
         if fig_disp:
             with c1:
-                st.plotly_chart(fig_disp, use_container_width=True) #use_container_width=True
+                st.plotly_chart(fig_disp) #use_container_width=True
         
         if fig_mtbf13:
             with c2:
-                st.plotly_chart(fig_mtbf13, use_container_width=True)
+                st.plotly_chart(fig_mtbf13) #use_container_width=True
 
         if fig_mtbf52:
-            st.plotly_chart(fig_mtbf52, use_container_width=True)
+            st.plotly_chart(fig_mtbf52) #use_container_width=True
 
     with tab2:
         st.subheader("Resumen de Gestión")
