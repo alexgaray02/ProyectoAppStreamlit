@@ -161,6 +161,11 @@ from tipodoc import documento
 from filtros import funfiltro
 from graficar import graficar_fun
 
+######################################
+import streamlit.components.v1 as components
+import plotly.io as pio
+##########################################
+
 # 1. Configuración de página con estilo
 st.set_page_config(page_title="Dashboard de Confiabilidad", layout="wide", page_icon="📊")
 
@@ -226,14 +231,14 @@ if archivo is not None:
         
         if fig_disp:
             with c1:
-                st.plotly_chart(fig_disp) #use_container_width=True
+                st.plotly_chart(fig_disp,height=720, export_filename="disponibilidad") #use_container_width=True
         
         if fig_mtbf13:
             with c2:
-                st.plotly_chart(fig_mtbf13) #use_container_width=True
+                st.plotly_chart(fig_mtbf13, height=720, export_filename="mtbf_13w") #use_container_width=True
 
         if fig_mtbf52:
-            st.plotly_chart(fig_mtbf52) #use_container_width=True
+            st.plotly_chart(fig_mtbf52, height=720, export_filename="mtbf_52w") #use_container_width=True
 
     with tab2:
         st.subheader("Resumen de Gestión")
