@@ -161,6 +161,14 @@ from tipodoc import documento
 from filtros import funfiltro
 from graficar import graficar_fun
 
+#######################
+import streamlit.components.v1 as components
+import plotly.io as pio
+###########################
+
+
+
+
 
 # 1. Configuración de página con estilo
 st.set_page_config(page_title="Dashboard de Confiabilidad", layout="wide", page_icon="📊")
@@ -218,23 +226,42 @@ if archivo is not None:
     # Tabs para organizar la información
     tab1, tab2, tab3 = st.tabs(["📈 Gráficos Principales", "📝 Resumen Ejecutivo", "📋 Datos Crudos"])
 
+    # with tab1:
+    #     st.subheader("Análisis de Indicadores")
+    #     fig_disp, fig_mtbf13, fig_mtbf52, fig_fusion = graficar_fun(df_filtrado, tipo_doc, proceso_sel, año_inicio, año_fin,color_actual, color_anteriores)
+
+    #     # Organización de gráficos en rejilla
+    #     c1, c2 = st.columns(2)
+        
+    #     if fig_disp:
+    #         with c1:
+    #             st.plotly_chart(fig_disp) #use_container_width=True
+        
+    #     if fig_mtbf13:
+    #         with c2:
+    #             st.plotly_chart(fig_mtbf13) #use_container_width=True
+
+    #     if fig_mtbf52:
+    #         st.plotly_chart(fig_mtbf52) #use_container_width=True
     with tab1:
         st.subheader("Análisis de Indicadores")
-        fig_disp, fig_mtbf13, fig_mtbf52, fig_fusion = graficar_fun(df_filtrado, tipo_doc, proceso_sel, año_inicio, año_fin,color_actual, color_anteriores)
+        fig_disp, fig_mtbf13, fig_mtbf52, fig_fusion = graficar_fun(
+            df_filtrado, tipo_doc, proceso_sel, año_inicio, año_fin,
+            color_actual, color_anteriores
+        )
 
-        # Organización de gráficos en rejilla
-        c1, c2 = st.columns(2)
-        
         if fig_disp:
-            with c1:
-                st.plotly_chart(fig_disp) #use_container_width=True
-        
+            plotly_scroll(fig_disp, height=720, export_filename="disponibilidad")
+
         if fig_mtbf13:
-            with c2:
-                st.plotly_chart(fig_mtbf13) #use_container_width=True
+            plotly_scroll(fig_mtbf13, height=720, export_filename="mtbf_13w")
 
         if fig_mtbf52:
-            st.plotly_chart(fig_mtbf52) #use_container_width=True
+            plotly_scroll(fig_mtbf52, height=720, export_filename="mtbf_52w")
+
+
+
+
 
     with tab2:
         st.subheader("Resumen de Gestión")
