@@ -245,7 +245,7 @@ if archivo is not None:
             # Una vista más limpia para el resumen
             st.plotly_chart(
                 fig_fusion,
-                use_container_width=True,
+                use_container_width=False,
                 config={
                     "toImageButtonOptions": {
                         "format": "png",
