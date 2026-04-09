@@ -187,21 +187,6 @@ st.markdown("""
         border-radius: 15px;
         padding: 10px;
     }
-            
-    #############################################        
-    .scroll-tab {
-        overflow-x: auto;
-        width: 100%;
-        padding-bottom: 10px;
-    }
-    .scroll-tab::-webkit-scrollbar {
-        height: 8px;
-    }
-    .scroll-tab::-webkit-scrollbar-thumb {
-        background: #ccc;
-        border-radius: 10px;
-    }           
-    ###############################################
 
     </style>
     """, unsafe_allow_html=True)
@@ -234,75 +219,45 @@ if archivo is not None:
     # Tabs para organizar la información
     tab1, tab2, tab3 = st.tabs(["📈 Gráficos Principales", "📝 Resumen Ejecutivo", "📋 Datos Crudos"])
 
-    # with tab1:
-    #     st.subheader("Análisis de Indicadores")
-    #     fig_disp, fig_mtbf13, fig_mtbf52, fig_fusion = graficar_fun(df_filtrado, tipo_doc, proceso_sel, año_inicio, año_fin,color_actual, color_anteriores)
-
-    #     # Organización de gráficos en rejilla
-    #     c1, c2 = st.columns(2)
-        
-    #     if fig_disp:
-    #         with c1:
-    #             st.plotly_chart(fig_disp) #use_container_width=True
-        
-    #     if fig_mtbf13:
-    #         with c2:
-    #             st.plotly_chart(fig_mtbf13) #use_container_width=True
-
-    #     if fig_mtbf52:
-    #         st.plotly_chart(fig_mtbf52) #use_container_width=True
- 
     with tab1:
         st.subheader("Análisis de Indicadores")
-        fig_disp, fig_mtbf13, fig_mtbf52, fig_fusion = graficar_fun(
-            df_filtrado, tipo_doc, proceso_sel, año_inicio, año_fin, color_actual, color_anteriores
-        )
+        fig_disp, fig_mtbf13, fig_mtbf52, fig_fusion = graficar_fun(df_filtrado, tipo_doc, proceso_sel, año_inicio, año_fin,color_actual, color_anteriores)
 
-        st.markdown('<div class="scroll-tab">', unsafe_allow_html=True)  # <-- CONTENEDOR SCROLL
+        # Organización de gráficos en rejilla
         c1, c2 = st.columns(2)
         
         if fig_disp:
             with c1:
-                st.plotly_chart(fig_disp, use_container_width=False)
+                st.plotly_chart(fig_disp,use_container_width=True)
+        
         if fig_mtbf13:
             with c2:
-                st.plotly_chart(fig_mtbf13, use_container_width=False)
+                st.plotly_chart(fig_mtbf13,use_container_width=True)
+
         if fig_mtbf52:
-            st.plotly_chart(fig_mtbf52, use_container_width=False)
-        st.markdown('</div>', unsafe_allow_html=True)  # <-- FIN DEL CONTENEDOR
-
-
-    # with tab2:
-    #     st.subheader("Resumen de Gestión")
-    #     if fig_fusion:
-    #         # Una vista más limpia para el resumen
-    #         st.plotly_chart(
-    #             fig_fusion,
-    #             use_container_width=True,
-    #             config={
-    #                 "toImageButtonOptions": {
-    #                     "format": "png",
-    #                     "filename": "indicadores_confiabilidad",
-    #                     "height": 600,
-    #                     "width": 1800,
-    #                     "scale": 3
-    #                 }
-    #             }
-    #         )
-    #     else:
-    #         st.info("No hay datos suficientes para generar el resumen.")
+            st.plotly_chart(fig_mtbf52, use_container_width=True)
+ 
+    
 
     with tab2:
         st.subheader("Resumen de Gestión")
         if fig_fusion:
-            st.markdown('<div class="scroll-tab">', unsafe_allow_html=True)
-            st.plotly_chart(fig_fusion, use_container_width=False)
-            st.markdown('</div>', unsafe_allow_html=True)
+            # Una vista más limpia para el resumen
+            st.plotly_chart(
+                fig_fusion,
+                use_container_width=True,
+                config={
+                    "toImageButtonOptions": {
+                        "format": "png",
+                        "filename": "indicadores_confiabilidad",
+                        "height": 600,
+                        "width": 1800,
+                        "scale": 3
+                    }
+                }
+            )
         else:
             st.info("No hay datos suficientes para generar el resumen.")
-
-
-
 
 
 

@@ -214,7 +214,7 @@ def funfiltro(df, tipo_doc):
             df = df[df["proceso"] == proceso_sel]
 
     # ==========================================
-    # 🎨 SELECTOR DE COLORES
+    # SELECTOR DE COLORES
     # ==========================================
     st.sidebar.divider()
     st.sidebar.header("🎨 Estilo de Gráficos")
