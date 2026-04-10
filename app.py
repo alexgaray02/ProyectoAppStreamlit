@@ -449,7 +449,7 @@ with st.sidebar:
 
     opcion = st.radio(
         "Fuente de datos",
-        ["Subir Excel", "Drive V1", "Drive Privado 🔐"]
+        ["Subir Excel", "Drive V1.0", "Drive Privado 🔐"]
     )
 
     archivo = None
@@ -461,7 +461,7 @@ with st.sidebar:
         if archivo:
             st.success("Archivo cargado correctamente")
 
-    elif opcion == "Drive V1":
+    elif opcion == "Drive V1.0":
         st.caption("Usando archivo desde Google Drive público")
 
         url = "https://docs.google.com/spreadsheets/d/1A5mED3JF1gFt0iHRLcL8UnEg9Lpqjtmo/export?format=xlsx"
