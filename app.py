@@ -413,7 +413,7 @@ def cargar_drive_privado():
 
 
 # 1. Configuración de página con estilo
-st.set_page_config(page_title="Dashboard de Confiabilidad", layout="wide", page_icon="📊")
+st.set_page_config(page_title="Portal de Confiabilidad", layout="wide", page_icon="🏎️")
 
 # 2. CSS personalizado para mejorar la estética
 st.markdown("""
