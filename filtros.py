@@ -110,7 +110,6 @@
 ###############################################################################
 
 
-
 ################################################################
 # filtros.py
 import streamlit as st
@@ -122,7 +121,20 @@ MESES_ORDEN = [
 ]
 
 MESES_MAP = {m: i+1 for i, m in enumerate(MESES_ORDEN)}
-MESES_INV = {v: k for k, v in MESES_MAP.items()}  # {1: "Enero", 2: "Febrero", ...}
+MESES_INV = {v: k for k, v in MESES_MAP.items()}
+
+
+def normalizar_mes(serie):
+    """Normaliza la columna mes para evitar fallos por encoding, espacios o capitalización."""
+    return (
+        serie.astype(str)
+        .str.strip()
+        .str.capitalize()
+        .replace("", pd.NA)
+        .replace("Nan", pd.NA)
+        .map(MESES_MAP)
+        .dropna()
+    )
 
 
 def funfiltro(df, tipo_doc):
@@ -145,21 +157,32 @@ def funfiltro(df, tipo_doc):
         st.sidebar.header("Filtro Fecha")
 
         años = sorted(df["año"].dropna().unique())
-
-        # ── Detectar mes real de inicio y fin ──────────────────────────
         año_real_min = int(años[0])
         año_real_max = int(años[-1])
 
-        # Mes más temprano del primer año disponible  → default Fecha Inicio
-        meses_en_año_min = df[df["año"] == año_real_min]["mes"].map(MESES_MAP).dropna()
-        mes_real_inicio_num = int(meses_en_año_min.min()) if not meses_en_año_min.empty else 1
+        # ── Detectar mes real de inicio y fin desde los datos ──────────
+        tiene_mes = (
+            "mes" in df.columns
+            and df["mes"].notna().any()
+            and (df["mes"].astype(str).str.strip() != "").any()
+        )
 
-        # Mes más tardío del último año disponible → default Fecha Fin
-        meses_en_año_max = df[df["año"] == año_real_max]["mes"].map(MESES_MAP).dropna()
-        mes_real_fin_num = int(meses_en_año_max.max()) if not meses_en_año_max.empty else 12
+        if tiene_mes:
+            # Solo filas con mes válido reconocido
+            mes_normalizado = df["mes"].astype(str).str.strip().str.capitalize()
+            df_con_mes = df[mes_normalizado.isin(MESES_MAP)]
 
-        mes_real_inicio = MESES_INV[mes_real_inicio_num]   # ej. "Mayo"
-        mes_real_fin    = MESES_INV[mes_real_fin_num]       # ej. "Enero"
+            meses_año_min = normalizar_mes(df_con_mes[df_con_mes["año"] == año_real_min]["mes"])
+            mes_real_inicio_num = int(meses_año_min.min()) if not meses_año_min.empty else 1
+
+            meses_año_max = normalizar_mes(df_con_mes[df_con_mes["año"] == año_real_max]["mes"])
+            mes_real_fin_num = int(meses_año_max.max()) if not meses_año_max.empty else 12
+        else:
+            mes_real_inicio_num = 1
+            mes_real_fin_num    = 12
+
+        mes_real_inicio = MESES_INV.get(mes_real_inicio_num, "Enero")
+        mes_real_fin    = MESES_INV.get(mes_real_fin_num,    "Diciembre")
         # ──────────────────────────────────────────────────────────────
 
         st.sidebar.subheader("Fecha Inicio")
@@ -167,13 +190,13 @@ def funfiltro(df, tipo_doc):
         with col1:
             año_inicio = st.selectbox(
                 "Año", años,
-                index=0,                                        # primer año
+                index=0,
                 key="am_año_inicio"
             )
         with col2:
             mes_inicio = st.selectbox(
                 "Mes", MESES_ORDEN,
-                index=MESES_ORDEN.index(mes_real_inicio),       # ej. Mayo → index 4
+                index=MESES_ORDEN.index(mes_real_inicio),
                 key="am_mes_inicio"
             )
 
@@ -182,18 +205,20 @@ def funfiltro(df, tipo_doc):
         with col3:
             año_fin = st.selectbox(
                 "Año ", años,
-                index=len(años) - 1,                            # último año
+                index=len(años) - 1,
                 key="am_año_fin"
             )
         with col4:
             mes_fin = st.selectbox(
                 "Mes ", MESES_ORDEN,
-                index=MESES_ORDEN.index(mes_real_fin),          # ej. Enero → index 0
+                index=MESES_ORDEN.index(mes_real_fin),
                 key="am_mes_fin"
             )
 
+        # Construir columna fecha si no existe
         if "fecha" not in df.columns:
-            mes_num = df["mes"].map(MESES_MAP).fillna(1)
+            mes_num = normalizar_mes(df["mes"]).reindex(df.index)
+            mes_num = mes_num.fillna(1)
             df["fecha"] = pd.to_datetime(
                 dict(year=df["año"], month=mes_num, day=1),
                 errors="coerce"
@@ -218,12 +243,12 @@ def funfiltro(df, tipo_doc):
         if años:
             año_inicio = st.sidebar.selectbox(
                 "Año Inicio", años,
-                index=0,                    # primer año
+                index=0,
                 key="a_inicio"
             )
             año_fin = st.sidebar.selectbox(
                 "Año Fin", años,
-                index=len(años) - 1,        # último año
+                index=len(años) - 1,
                 key="a_fin"
             )
 
